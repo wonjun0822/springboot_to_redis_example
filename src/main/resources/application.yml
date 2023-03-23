@@ -1,0 +1,9 @@
+spring:
+  session:
+    storage-type: redis
+    timeout: 180
+    redis:
+      flush-mode: on_save
+  redis:
+    host: localhost
+    port: 6379

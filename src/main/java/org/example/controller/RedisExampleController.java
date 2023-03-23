@@ -1,19 +1,15 @@
 package org.example.controller;
 
-import lombok.RequiredArgsConstructor;
-
 import org.example.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
-public class ExampleController {
+@RequestMapping("/redis")
+public class RedisExampleController {
     @Autowired
     RedisService redisService;
 
@@ -30,5 +26,50 @@ public class ExampleController {
     @DeleteMapping("/string")
     public void deleteString(String key) {
         redisService.deleteValues(key);
+    }
+
+    @GetMapping("/set")
+    public Set getSet(String key) {
+        return redisService.getSets(key);
+    }
+
+    @PostMapping("/set")
+    public void setSet(String key, String value) {
+        redisService.setSets(key, value);
+    }
+
+    @DeleteMapping("/set")
+    public void deleteSet(String key, String value) {
+        redisService.deleteSets(key, value);
+    }
+
+    @GetMapping("/list")
+    public Object getList(String key, @RequestParam(defaultValue = "0") int index) {
+        return redisService.getLists(key, index);
+    }
+
+    @PostMapping("/list")
+    public void setList(String key, String value) {
+        redisService.setLists(key, value);
+    }
+
+    @DeleteMapping("/list")
+    public void deleteList(String key) {
+        redisService.deleteLists(key);
+    }
+
+    @GetMapping("/hash")
+    public Object getHash(String key, String field) {
+        return redisService.getHashes(key, field);
+    }
+
+    @PostMapping("/hash")
+    public void setList(String key, String field, String value) {
+        redisService.setHashes(key, field, value);
+    }
+
+    @DeleteMapping("/hash")
+    public void deleteHash(String key, String field) {
+        redisService.deleteHashes(key, field);
     }
 }
