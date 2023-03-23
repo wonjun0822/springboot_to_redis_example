@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -71,5 +72,20 @@ public class RedisExampleController {
     @DeleteMapping("/hash")
     public void deleteHash(String key, String field) {
         redisService.deleteHashes(key, field);
+    }
+
+    @GetMapping("/sortedset")
+    public List<String> getSortedSet(String key) {
+        return redisService.getSortedSets(key);
+    }
+
+    @PostMapping("/sortedset")
+    public void setSortedSet(String key, String value, @RequestParam(defaultValue = "0") int score) {
+        redisService.setSortedSets(key, value, score);
+    }
+
+    @DeleteMapping("/sortedset")
+    public void deleteSortedSet(String key, String value) {
+        redisService.deleteSortedSets(key, value);
     }
 }
