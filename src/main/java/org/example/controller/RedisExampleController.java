@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -9,10 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/redis")
 public class RedisExampleController {
-    @Autowired
-    RedisService redisService;
+    private final RedisService redisService;
 
     @GetMapping("/string")
     public String getString(String key) {

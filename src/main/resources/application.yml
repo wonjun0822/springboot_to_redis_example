@@ -5,5 +5,6 @@ spring:
     redis:
       flush-mode: on_save
   redis:
-    host: localhost
+    host: www.wonjun-proxy.store
     port: 6379
+    password: ekdud0822

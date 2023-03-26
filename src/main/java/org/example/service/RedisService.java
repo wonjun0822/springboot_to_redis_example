@@ -2,18 +2,21 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class RedisService {
-    private final RedisTemplate redisTemplate;
+    @Autowired
+    private final RedisTemplate<String, String> redisTemplate;
 
     public String getValues(String key){
         ValueOperations ops = redisTemplate.opsForValue();
@@ -40,7 +43,7 @@ public class RedisService {
     }
 
     public void setSets(String key, String value) {
-        SetOperations<String, Object> ops = redisTemplate.opsForSet();
+        SetOperations ops = redisTemplate.opsForSet();
 
         ops.add(key, value, 60, TimeUnit.SECONDS);
     }
@@ -105,5 +108,9 @@ public class RedisService {
         ZSetOperations ops = redisTemplate.opsForZSet();
 
         ops.remove(key, value);
+    }
+
+    public void setStreams(String key, Map map) {
+        redisTemplate.opsForStream().add(key, map);
     }
 }
