@@ -1,6 +1,9 @@
 package org.example.config;
 
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.ReadFrom;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +11,7 @@ import org.springframework.data.redis.cache.CacheKeyPrefix;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.*;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -16,6 +20,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @EnableCaching
@@ -31,13 +37,26 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+        LettuceClientConfiguration configuration = LettuceClientConfiguration.builder()
+                .readFrom(ReadFrom.REPLICA)
+                .build();
+
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
 
         redisConfiguration.setHostName(host);
         redisConfiguration.setPort(port);
         redisConfiguration.setPassword(password);
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration);
+        RedisStaticMasterReplicaConfiguration redisStaticMasterReplicaConfiguration =
+                new RedisStaticMasterReplicaConfiguration("localhost", 6379);
+
+        redisStaticMasterReplicaConfiguration.addNode("localhost", 6380);
+        redisStaticMasterReplicaConfiguration.addNode("localhost", 6381);
+
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(
+                redisConfiguration,
+                configuration
+        );
 
         return lettuceConnectionFactory;
     }
